@@ -1,10 +1,8 @@
 <?php
 
-use Skollro\Otherwise\Match;
+namespace Skollro\Otherwise;
 
-if (! function_exists('match')) {
-    function match($value)
-    {
-        return new Match($value);
-    }
+function match($value)
+{
+    return Match::value($value);
 }

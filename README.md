@@ -35,9 +35,10 @@ This package provides a helper function `match`. It returns an instance of `Skol
 
 ```php
 use Skollro\Otherwise\Match;
+use function Skollro\Otherwise\match;
 
-$result = match($value)
-$result = new Match($value)
+$match = match($value);
+$match = Match::value($value);
 ```
 
 ### When

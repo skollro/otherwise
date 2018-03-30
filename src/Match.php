@@ -10,11 +10,16 @@ class Match
     protected $result;
     protected $hasMatch;
 
-    public function __construct($value)
+    protected function __construct($value)
     {
         $this->value = $value;
         $this->result = null;
         $this->hasMatch = false;
+    }
+
+    public static function value($value)
+    {
+        return new self($value);
     }
 
     public function when($condition, $result)

@@ -14,7 +14,7 @@
     "autoload": {
         "files": ["src/helpers.php"],
         "psr-4": {
-            "Skollro\\Otherwise\\": "src/Otherwise"
+            "Skollro\\Otherwise\\": "src"
         }
     },
     "autoload-dev": {

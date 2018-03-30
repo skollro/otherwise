@@ -5,6 +5,7 @@ namespace Skollro\Otherwise\Test;
 use Exception;
 use Skollro\Otherwise\Match;
 use PHPUnit\Framework\TestCase;
+use function Skollro\Otherwise\match;
 
 class MatchTest extends TestCase
 {
@@ -12,6 +13,14 @@ class MatchTest extends TestCase
     public function match_helper_creates_a_new_instance()
     {
         $match = match('A');
+
+        $this->assertInstanceOf(Match::class, $match);
+    }
+
+    /** @test */
+    public function match_creates_a_new_instance()
+    {
+        $match = Match::value('A');
 
         $this->assertInstanceOf(Match::class, $match);
     }
