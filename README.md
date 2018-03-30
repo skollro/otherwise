@@ -1,5 +1,7 @@
 # Functional when-otherwise conditionals
 
+[![Build Status](https://img.shields.io/travis/skollro/otherwise/master.svg?style=flat-square)](https://travis-ci.org/skollro/otherwise)
+
 This package allows to replace PHP conditionals by an easy functional match-when-otherwise syntax which allows to match patterns and return the corresponding value.
 
 ```php
