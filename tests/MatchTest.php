@@ -102,6 +102,7 @@ class MatchTest extends TestCase
                 ->otherwiseThrow(new Exception);
         } catch (Exception $e) {
             $this->assertInstanceOf(Exception::class, $e);
+
             return;
         }
 
@@ -117,6 +118,7 @@ class MatchTest extends TestCase
                 ->otherwiseThrow(Exception::class);
         } catch (Exception $e) {
             $this->assertInstanceOf(Exception::class, $e);
+
             return;
         }
 
@@ -131,10 +133,12 @@ class MatchTest extends TestCase
                 ->when(false, null)
                 ->otherwiseThrow(function ($value) {
                     $this->assertSame(42, $value);
+
                     return new Exception;
                 });
         } catch (Exception $e) {
             $this->assertInstanceOf(Exception::class, $e);
+
             return;
         }
 
