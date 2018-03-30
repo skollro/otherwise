@@ -1,6 +1,6 @@
 # Functional when-otherwise conditionals
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/skollro/otherwise.svg?style=flat-square)](https://packagist.org/packages/skollro/otherwise)
+[![Latest Version](https://img.shields.io/github/release/skollro/otherwise.svg?style=flat-square)](https://github.com/skollro/otherwise/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Build Status](https://img.shields.io/travis/skollro/otherwise/master.svg?style=flat-square)](https://travis-ci.org/skollro/otherwise)
 [![StyleCI](https://styleci.io/repos/127410017/shield)](https://styleci.io/repos/127410017)
