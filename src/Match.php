@@ -36,6 +36,11 @@ class Match
         return $this;
     }
 
+    public function whenInstanceOf($type, $result)
+    {
+        return $this->when($this->value instanceof $type, $result);
+    }
+
     public function otherwise($value)
     {
         if ($this->hasMatch) {

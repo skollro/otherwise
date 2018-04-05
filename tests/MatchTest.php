@@ -58,11 +58,32 @@ class MatchTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_the_first_match()
+    public function when_returns_the_first_match()
     {
         $result = match(null)
             ->when(true, 'A')
             ->when(true, 'B')
+            ->otherwise('C');
+
+        $this->assertEquals('A', $result);
+    }
+
+    /** @test */
+    public function when_instance_of_accepts_a_class_name()
+    {
+        $result = match(new A)
+            ->whenInstanceOf(A::class, 'A')
+            ->otherwise('B');
+
+        $this->assertEquals('A', $result);
+    }
+
+    /** @test */
+    public function when_instance_of_returns_the_first_match()
+    {
+        $result = match(new A)
+            ->whenInstanceOf(A::class, 'A')
+            ->whenInstanceOf(A::class, 'B')
             ->otherwise('C');
 
         $this->assertEquals('A', $result);
@@ -153,4 +174,12 @@ class MatchTest extends TestCase
 
         $this->fail();
     }
+}
+
+class A
+{
+}
+
+class B
+{
 }
