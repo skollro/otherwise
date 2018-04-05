@@ -43,22 +43,31 @@ class Match
 
     public function otherwise($value)
     {
-        if ($this->hasMatch) {
-            return is_callable($this->result) ? ($this->result)($this->value) : $this->result;
-        }
-
-        return is_callable($value) ? $value($this->value) : $value;
+        return $this->resolveResult(function () use ($value) {
+            return is_callable($value) ? $value($this->value) : $value;
+        });
     }
 
     public function otherwiseThrow($value)
     {
-        throw (new self($value))
-            ->when(is_callable($value), function ($value) {
-                return $value($this->value);
-            })
-            ->when($value instanceof Throwable, $value)
-            ->otherwise(function ($value) {
-                return new $value;
-            });
+        return $this->resolveResult(function () use ($value) {
+            throw (new self($value))
+                ->when(is_callable($value), function ($value) {
+                    return $value($this->value);
+                })
+                ->when($value instanceof Throwable, $value)
+                ->otherwise(function ($value) {
+                    return new $value;
+                });
+        });
+    }
+
+    protected function resolveResult($otherwise)
+    {
+        if ($this->hasMatch) {
+            return is_callable($this->result) ? ($this->result)($this->value) : $this->result;
+        }
+
+        return $otherwise();
     }
 }

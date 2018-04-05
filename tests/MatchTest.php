@@ -174,6 +174,16 @@ class MatchTest extends TestCase
 
         $this->fail();
     }
+
+    /** @test */
+    public function it_throws_no_exception_if_a_match_was_found()
+    {
+        $result = match([1, 2, 3])
+            ->when(true, 42)
+            ->otherwiseThrow(Exception::class);
+
+        $this->assertSame(42, $result);
+    }
 }
 
 class A
