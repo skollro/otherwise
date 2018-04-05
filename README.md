@@ -29,9 +29,9 @@ composer require skollro/otherwise
 
 Every conditional `match` consists out of one or multiple `when` and one `otherwise` to provide values for each path.
 
-### Helper function
+#### `match($value): Match`
 
-This package provides a helper function `match`. It returns an instance of `Skollro\Otherwise\Match`.
+This package provides a helper function `match`.
 
 ```php
 use Skollro\Otherwise\Match;
@@ -41,9 +41,9 @@ $match = match($value);
 $match = Match::value($value);
 ```
 
-### When
+#### `when($condition, $result): Match`
 
-`when($condition, $result)` accepts callbacks, function names or bools as `$condition`. `$result` takes either a value or a callback for lazy evaluation. More specific conditions have to be defined first because the first match is considered to be the result.
+`$condition` is of type callable or bool. `$result` takes either some value or a callable for lazy evaluation. More specific conditions have to be defined first because the first match is the final result.
 
 ```php
 $result = match('A')
@@ -59,9 +59,25 @@ $result = match('A')
 // $result is "This is always true" because it's the first condition that evaluates to true
 ```
 
-### Otherwise
+#### `whenInstanceOf($type, $result): Match`
 
-`otherwise($value)` accepts callbacks, function names or values. Supplies the default value if no `when` has evaluated to `true` before.
+This is just a shortcut method for `$value instanceof A`. `$type` is anything that can be on the left side of an `instanceof` operator. `$result` takes either some value or a callable for lazy evaluation. More specific conditions have to be defined first because the first match is the final result.
+
+```php
+$result = match(new A)
+    ->whenInstanceOf(B::class, 'This is false')
+    ->whenInstanceOf(A::class, 'This is true')
+    ->when(function ($value) {
+        return $value instanceof A;
+    }, 'This is not the first match')
+    ->otherwise('C');
+
+// $result is "This is true" because it's the first condition that evaluates to true
+```
+
+#### `otherwise($value)`
+
+`$value` is of type callable or some value. Supplies the default value if no `when` has evaluated to `true` before.
 
 ```php
 $result = match('A')
@@ -85,10 +101,9 @@ $result = match('A')
 // $result is 1
 ```
 
-### Otherwise Throw
+#### `otherwiseThrow($value)`
 
-`otherwiseThrow($value)` throws an exception if no `when` has evaluated to `true`
- before. It accepts exception class names, exception objects or a callback that returns an exception.
+Throws an exception if no `when` has evaluated to `true` before. It accepts exception class names, exception objects or a callable that returns an exception.
 
 ```php
 // recommended: an instance of the exception is only created if needed
