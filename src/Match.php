@@ -24,21 +24,22 @@ class Match
 
     public function when($condition, $result)
     {
-        if ($this->hasMatch) {
-            return $this;
-        }
-
-        if (is_callable($condition) ? $condition($this->value) : $condition) {
+        return $this->matchResult($condition, function () use ($result) {
             $this->result = $result;
             $this->hasMatch = true;
-        }
-
-        return $this;
+        });
     }
 
     public function whenInstanceOf($type, $result)
     {
         return $this->when($this->value instanceof $type, $result);
+    }
+
+    public function whenThrow($condition, $result)
+    {
+        return $this->matchResult($condition, function () use ($result) {
+            throw $this->resolveThrowable($result);
+        });
     }
 
     public function otherwise($value)
@@ -51,15 +52,21 @@ class Match
     public function otherwiseThrow($value)
     {
         return $this->resolveResult(function () use ($value) {
-            throw (new self($value))
-                ->when(is_callable($value), function ($value) {
-                    return $value($this->value);
-                })
-                ->when($value instanceof Throwable, $value)
-                ->otherwise(function ($value) {
-                    return new $value;
-                });
+            throw $this->resolveThrowable($value);
         });
+    }
+
+    protected function matchResult($condition, $when)
+    {
+        if ($this->hasMatch) {
+            return $this;
+        }
+
+        if (is_callable($condition) ? $condition($this->value) : $condition) {
+            $when();
+        }
+
+        return $this;
     }
 
     protected function resolveResult($otherwise)
@@ -69,5 +76,17 @@ class Match
         }
 
         return $otherwise();
+    }
+
+    protected function resolveThrowable($value)
+    {
+        return (new self($value))
+            ->when(is_callable($value), function ($value) {
+                return $value($this->value);
+            })
+            ->when($value instanceof Throwable, $value)
+            ->otherwise(function ($value) {
+                return new $value;
+            });
     }
 }

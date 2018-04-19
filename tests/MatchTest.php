@@ -184,6 +184,73 @@ class MatchTest extends TestCase
 
         $this->assertSame(42, $result);
     }
+
+    /**
+     * @test
+     * @expectedException Exception
+     */
+    public function it_throws_a_given_exception_in_when_throw()
+    {
+        match(42)
+            ->whenThrow(true, new Exception)
+            ->otherwise(false);
+    }
+
+    /**
+     * @test
+     * @expectedException Exception
+     */
+    public function it_throws_an_exception_lazily_by_default_in_when_throw()
+    {
+        match(42)
+            ->whenThrow(true, Exception::class)
+            ->otherwise(false);
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_an_exception_supplied_by_a_callback_in_when_throw()
+    {
+        try {
+            match(42)
+                ->whenThrow(true, function ($value) {
+                    return new Exception($value);
+                })
+                ->otherwise(false);
+        } catch (Exception $e) {
+            $this->assertEquals(42, $e->getMessage());
+
+            return;
+        }
+
+        $this->fail();
+    }
+
+    /** @test */
+    public function it_throws_no_exception_in_when_throw_when_a_match_was_found_before()
+    {
+        $result = match(42)
+            ->when(true, true)
+            ->whenThrow(true, Exception::class)
+            ->otherwise(false);
+
+        $this->assertTrue($result);
+    }
+
+    /**
+     * @test
+     */
+    public function when_throw_accepts_a_callback_condition()
+    {
+        $result = match(42)
+            ->whenThrow(function ($value) {
+                return $value !== 42;
+            }, Exception::class)
+            ->otherwise(false);
+
+        $this->assertFalse($result);
+    }
 }
 
 class A
