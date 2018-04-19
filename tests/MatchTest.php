@@ -123,36 +123,26 @@ class MatchTest extends TestCase
         $this->assertSame(3, $result);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @expectedException Exception
+     */
     public function it_throws_a_given_exception()
     {
-        try {
-            $result = match(null)
-                ->when(false, null)
-                ->otherwiseThrow(new Exception);
-        } catch (Exception $e) {
-            $this->assertInstanceOf(Exception::class, $e);
-
-            return;
-        }
-
-        $this->fail();
+        $result = match(null)
+            ->when(false, null)
+            ->otherwiseThrow(new Exception);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @expectedException Exception
+     */
     public function it_throws_an_exception_lazily_by_default()
     {
-        try {
-            $result = match(null)
-                ->when(false, null)
-                ->otherwiseThrow(Exception::class);
-        } catch (Exception $e) {
-            $this->assertInstanceOf(Exception::class, $e);
-
-            return;
-        }
-
-        $this->fail();
+        $result = match(null)
+            ->when(false, null)
+            ->otherwiseThrow(Exception::class);
     }
 
     /** @test */
@@ -162,12 +152,10 @@ class MatchTest extends TestCase
             $result = match(42)
                 ->when(false, null)
                 ->otherwiseThrow(function ($value) {
-                    $this->assertSame(42, $value);
-
-                    return new Exception;
+                    return new Exception($value);
                 });
         } catch (Exception $e) {
-            $this->assertInstanceOf(Exception::class, $e);
+            $this->assertEquals(42, $e->getMessage());
 
             return;
         }
@@ -207,9 +195,7 @@ class MatchTest extends TestCase
             ->otherwise(false);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function it_throws_an_exception_supplied_by_a_callback_in_when_throw()
     {
         try {
@@ -228,7 +214,7 @@ class MatchTest extends TestCase
     }
 
     /** @test */
-    public function it_throws_no_exception_in_when_throw_when_a_match_was_found_before()
+    public function it_throws_no_exception_in_when_throw_if_a_match_was_found()
     {
         $result = match(42)
             ->when(true, true)
@@ -238,9 +224,7 @@ class MatchTest extends TestCase
         $this->assertTrue($result);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function when_throw_accepts_a_callback_condition()
     {
         $result = match(42)
