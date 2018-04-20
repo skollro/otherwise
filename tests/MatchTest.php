@@ -235,6 +235,26 @@ class MatchTest extends TestCase
 
         $this->assertFalse($result);
     }
+
+    /** @test */
+    public function when_matches_against_a_value()
+    {
+        $result = match(42)
+            ->when(43, true)
+            ->otherwise(false);
+
+        $this->assertFalse($result);
+    }
+
+    /** @test */
+    public function when_throw_matches_against_a_value()
+    {
+        $result = match(42)
+            ->whenThrow(43, Exception::class)
+            ->otherwise(false);
+
+        $this->assertFalse($result);
+    }
 }
 
 class A

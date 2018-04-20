@@ -62,11 +62,24 @@ class Match
             return $this;
         }
 
-        if (is_callable($condition) ? $condition($this->value) : $condition) {
+        if ($this->resolveCondition($condition)) {
             $when();
         }
 
         return $this;
+    }
+
+    protected function resolveCondition($condition)
+    {
+        if (is_bool($condition)) {
+            return $condition;
+        }
+
+        if (is_callable($condition)) {
+            return $condition($this->value);
+        }
+
+        return $condition == $this->value;
     }
 
     protected function resolveResult($otherwise)
