@@ -7,19 +7,21 @@ use Throwable;
 class Match
 {
     protected $value;
+    protected $params;
     protected $result;
     protected $hasMatch;
 
-    protected function __construct($value)
+    protected function __construct($value, ...$params)
     {
         $this->value = $value;
+        $this->params = $params;
         $this->result = null;
         $this->hasMatch = false;
     }
 
-    public static function value($value)
+    public static function value($value, ...$params)
     {
-        return new self($value);
+        return new self($value, ...$params);
     }
 
     public function when($condition, $result)
@@ -45,7 +47,7 @@ class Match
     public function otherwise($value)
     {
         return $this->resolveResult(function () use ($value) {
-            return is_callable($value) ? $value($this->value) : $value;
+            return is_callable($value) ? $value($this->value, ...$this->params) : $value;
         });
     }
 
@@ -85,7 +87,7 @@ class Match
     protected function resolveResult($otherwise)
     {
         if ($this->hasMatch) {
-            return is_callable($this->result) ? ($this->result)($this->value) : $this->result;
+            return is_callable($this->result) ? ($this->result)($this->value, ...$this->params) : $this->result;
         }
 
         return $otherwise();
@@ -95,7 +97,7 @@ class Match
     {
         return (new self($value))
             ->when(is_callable($value), function ($value) {
-                return $value($this->value);
+                return $value($this->value, ...$this->params);
             })
             ->when($value instanceof Throwable, $value)
             ->otherwise(function ($value) {

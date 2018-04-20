@@ -2,7 +2,7 @@
 
 namespace Skollro\Otherwise;
 
-function match($value)
+function match($value, ...$params)
 {
-    return Match::value($value);
+    return Match::value($value, ...$params);
 }

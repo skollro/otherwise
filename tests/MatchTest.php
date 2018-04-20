@@ -255,6 +255,60 @@ class MatchTest extends TestCase
 
         $this->assertFalse($result);
     }
+
+    /** @test */
+    public function additional_params_are_passed_to_a_when_callback()
+    {
+        match(42, 4, 8)
+            ->when(true, function ($value, $four, $eight) {
+                $this->assertSame(4, $four);
+                $this->assertSame(8, $eight);
+            })
+            ->otherwise(false);
+    }
+
+    /**
+     * @test
+     * @expectedException Exception
+     */
+    public function additional_params_are_passed_to_a_when_throw_callback()
+    {
+        match(42, 4, 8)
+            ->whenThrow(true, function ($value, $four, $eight) {
+                $this->assertSame(4, $four);
+                $this->assertSame(8, $eight);
+
+                return new Exception;
+            })
+            ->otherwise(false);
+    }
+
+    /** @test */
+    public function additional_params_are_passed_to_an_otherwise_callback()
+    {
+        match(42, 4, 8)
+            ->when(false, false)
+            ->otherwise(function ($value, $four, $eight) {
+                $this->assertSame(4, $four);
+                $this->assertSame(8, $eight);
+            });
+    }
+
+    /**
+     * @test
+     * @expectedException Exception
+     */
+    public function additional_params_are_passed_to_an_otherwise_throw_callback()
+    {
+        match(42, 4, 8)
+            ->when(false, false)
+            ->otherwiseThrow(function ($value, $four, $eight) {
+                $this->assertSame(4, $four);
+                $this->assertSame(8, $eight);
+
+                return new Exception;
+            });
+    }
 }
 
 class A
