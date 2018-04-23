@@ -29,9 +29,9 @@ composer require skollro/otherwise
 
 Every conditional `match` consists out of one or multiple `when` and one `otherwise` to provide values for each path.
 
-#### `match($value): Match`
+#### `match($value, ...$params): Match`
 
-This package provides a helper function `match`.
+This package provides a helper function `match`. The first value is the value to match against. You can pass a variable amount of `$params` which are passed to every callable that resolves a `$result`.
 
 ```php
 use Skollro\Otherwise\Match;
@@ -43,20 +43,22 @@ $match = Match::value($value);
 
 #### `when($condition, $result): Match`
 
-`$condition` is of type callable or bool. `$result` takes either some value or a callable for lazy evaluation. More specific conditions have to be defined first because the first match is the final result.
+`$condition` is a bool, a callable or a value to compare against (using `==`). `$result` takes either some value or a callable for lazy evaluation. More specific conditions have to be defined first because the first match is the final result.
 
 ```php
-$result = match('A')
-    ->when(false, function ($value) {
-        return "This {$value} is always false";
+$result = match('A', 'Some value')
+    ->when('B', function ($value) {
+        return "{$value} is always false: A != B";
     })
-    ->when(true, 'This is always true')
+    ->when(true, function ($value, $param) {
+        return "This is always true ({$param})";
+    })
     ->when(function ($value) {
         return strlen($value) == 1;
     }, 'This is not the first match')
     ->otherwise('B');
 
-// $result is "This is always true" because it's the first condition that evaluates to true
+// $result is "This is always true (Some value)" because it's the first condition that evaluates to true
 ```
 
 #### `whenInstanceOf($type, $result): Match`
@@ -75,6 +77,19 @@ $result = match(new A)
 // $result is "This is true" because it's the first condition that evaluates to true
 ```
 
+#### `whenThrow($condition, $result): Match`
+
+`$condition` is a bool, a callable or a value to compare against (using `==`). `$result` takes either an exception class name, an exception instance or a callable that returns an exception. More specific conditions have to be defined first because the first match throws the exception instantly.
+
+```php
+$result = match('A')
+    ->when(false, 'This is always false')
+    ->whenThrow('A', Exception::class)
+    ->otherwise('C');
+
+// Exception is thrown
+```
+
 #### `otherwise($value)`
 
 `$value` is of type callable or some value. Supplies the default value if no `when` has evaluated to `true` before.
@@ -86,13 +101,13 @@ $result = match('A')
 
 // $result is "B"
 
-$result = match('A')
+$result = match('A', 'Some value')
     ->when(false, 'This is always false')
-    ->otherwise(function ($value) {
-        return $value;
+    ->otherwise(function ($value, $param) {
+        return "{$value} ({$param})";
     });
 
-// $result is "A"
+// $result is "A (Some value)"
 
 $result = match('A')
     ->when(false, 'This is always false')
@@ -103,7 +118,7 @@ $result = match('A')
 
 #### `otherwiseThrow($value)`
 
-Throws an exception if no `when` has evaluated to `true` before. It accepts exception class names, exception objects or a callable that returns an exception.
+Throws an exception if no `when` has evaluated to `true` before. It takes an exception class name, an exception instance or a callable that returns an exception.
 
 ```php
 // recommended: an instance of the exception is only created if needed
@@ -111,10 +126,10 @@ $result = match('A')
     ->when(false, 'This is always false')
     ->otherwiseThrow(Exception::class);
 
-$result = match('A')
+$result = match('A', 'Some value')
     ->when(false, 'This is always false')
-    ->otherwiseThrow(function ($value) {
-        throw new Exception("Message {$value}");
+    ->otherwiseThrow(function ($value, $param) {
+        throw new Exception("Message {$value} ({$param})");
     });
 
 // not recommended
