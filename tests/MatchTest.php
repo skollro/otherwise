@@ -3,8 +3,8 @@
 namespace Skollro\Otherwise\Test;
 
 use Exception;
-use Skollro\Otherwise\Match;
 use PHPUnit\Framework\TestCase;
+use Skollro\Otherwise\Match;
 use function Skollro\Otherwise\match;
 
 class MatchTest extends TestCase
